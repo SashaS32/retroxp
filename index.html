@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#071b50">
+  <title>RetroXP 1.0 — Windows в браузере</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./"><span class="logo">XP</span><span>RetroXP <small>1.0</small></span></a>
+    <nav><a href="#about">О проекте</a><a href="#how">Как запустить</a></nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">ВИНТАЖНЫЙ КОМПЬЮТЕР • ПРЯМО В БРАУЗЕРЕ</p>
+        <h1>Твоя любимая<br><span>эпоха Windows XP.</span></h1>
+        <p class="lead">RetroXP — экспериментальный проект браузерного компьютера. Мы готовим запуск настоящей гостевой ОС через эмулятор, а не просто нарисованный интерфейс.</p>
+        <a class="primary" href="#how">Начать настройку <span>→</span></a>
+        <p class="note">Пока это стартовая страница: эмулятор и совместимый образ ОС ещё нужно подключить.</p>
+      </div>
+      <div class="desktop-card" aria-label="Декоративный макет рабочего стола Windows XP">
+        <div class="windowbar"><span>RetroXP Desktop</span><span>— □ ×</span></div>
+        <div class="wallpaper">
+          <div class="cloud c1"></div><div class="cloud c2"></div>
+          <div class="hill"></div><div class="hill2"></div>
+          <div class="recycle">♻<small>Корзина</small></div>
+          <div class="fake-window"><b>Добро пожаловать в RetroXP!</b><p>Воспоминания начинаются здесь.</p><span class="fake-button">OK</span></div>
+        </div>
+        <div class="taskbar"><span class="start">⊞ Пуск</span><span class="clock">13:59</span></div>
+      </div>
+    </section>
+
+    <section class="panel" id="about">
+      <p class="eyebrow">О ПРОЕКТЕ</p>
+      <h2>Не симулятор, а эмуляция</h2>
+      <p>Цель RetroXP — запускать гостевую операционную систему в браузере с помощью программной эмуляции. Этот шаблон пока содержит только сайт-оболочку; он не включает Windows, BIOS или виртуальный диск.</p>
+    </section>
+
+    <section class="panel" id="how">
+      <p class="eyebrow">СЛЕДУЮЩИЙ ЭТАП</p>
+      <h2>Подключение виртуального компьютера</h2>
+      <ol>
+        <li>Выбрать эмулятор, совместимый с нужной архитектурой и конфигурацией XP.</li>
+        <li>Подготовить виртуальный диск и загрузочные файлы в поддерживаемом формате.</li>
+        <li>Проверить запуск локально и только затем публиковать на GitHub Pages.</li>
+      </ol>
+      <div class="status"><span class="dot"></span><span id="status-text">Сайт готов. Эмулятор пока не подключён.</span></div>
+    </section>
+  </main>
+
+  <footer>RetroXP 1.0 <span>Неофициальный фан-проект. Windows XP — товарный знак Microsoft.</span></footer>
+  <script src="script.js"></script>
+</body>
+</html>
