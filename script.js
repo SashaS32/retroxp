@@ -1,7 +1,1 @@
-// RetroXP 1.0 — стартовая оболочка сайта.
-document.addEventListener("DOMContentLoaded", () => {
-  const status = document.getElementById("status-text");
-  if (status) {
-    status.textContent = "Сайт загружен. Следующий шаг — подключить и протестировать эмулятор.";
-  }
-});
+(()=>{const start=document.querySelector("#start"),stop=document.querySelector("#stop"),status=document.querySelector("#status"),state=document.querySelector("#machine-state"),error=document.querySelector("#error");let vm=null;start.onclick=()=>{error.textContent="";if(!window.V86Starter){error.textContent="Не удалось загрузить v86. Проверь интернет-соединение.";return}start.disabled=true;status.textContent="ЗАПУСК...";state.textContent="ЗАПУСК...";try{vm=new V86Starter({wasm_path:"https://copy.sh/v86/build/v86.wasm",memory_size:512*1024*1024,vga_memory_size:8*1024*1024,screen_container:document.querySelector("#screen_container"),bios:{url:"https://copy.sh/v86/bios/seabios.bin"},vga_bios:{url:"https://copy.sh/v86/bios/vgabios.bin"},cdrom:{url:"assets/windows-xp.iso"},autostart:true});vm.add_listener("emulator-ready",()=>{status.textContent="ЭМУЛЯТОР ГОТОВ";state.textContent="РАБОТАЕТ";stop.disabled=false});vm.add_listener("download-progress",p=>{if(p&&p.total)status.textContent="ЗАГРУЗКА "+Math.round(100*p.loaded/p.total)+"%"})}catch(e){error.textContent="Ошибка: "+e.message;start.disabled=false;status.textContent="ОШИБКА"}};stop.onclick=()=>{if(vm&&vm.stop)vm.stop();vm=null;stop.disabled=true;start.disabled=false;status.textContent="ОСТАНОВЛЕН";state.textContent="ОЖИДАНИЕ";document.querySelector("#screen_container").innerHTML='<div class="placeholder"><strong>XP</strong><p>Экран виртуальной машины появится здесь</p></div>'}})();
