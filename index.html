@@ -11,8 +11,18 @@
 <section class="panel"><div class="panel-head"><div><span class="dot"></span> VIRTUAL MACHINE</div><span> x86 · v86</span></div>
 <div class="screen-wrap"><div id="screen_container"><div class="screen-placeholder" id="placeholder"><div class="xp-mark">XP</div><b>RetroXP 1.0</b><span>Выбери виртуальный диск, чтобы начать</span></div></div></div>
 <div class="controls"><label class="file-button" for="diskFile">Выбрать диск (.img)</label><input id="diskFile" type="file" accept=".img,.bin,.hdd,.vhd"><button id="startBtn" disabled>▶ Запустить Windows XP</button><button id="stopBtn" class="secondary" disabled>■ Остановить</button><button id="screenFullscreenBtn" class="secondary" type="button">⛶ Экран XP</button></div>
+<div class="input-dock" aria-label="Управление клавиатурой и мышью">
+  <div class="dock-title">КЛАВИАТУРА И МЫШЬ</div>
+  <div class="key-row">
+    <button type="button" data-key="1c">Enter</button><button type="button" data-key="01">Esc</button><button type="button" data-key="0f">Tab</button><button type="button" data-key="0e">⌫</button>
+    <button type="button" data-key="1d">Ctrl</button><button type="button" data-key="38">Alt</button><button type="button" data-key="2a">Shift</button>
+    <button type="button" data-key="48">↑</button><button type="button" data-key="4b">←</button><button type="button" data-key="50">↓</button><button type="button" data-key="4d">→</button>
+  </div>
+  <div class="mouse-row"><button type="button" data-mouse="0">Левая кнопка мыши</button><button type="button" data-mouse="2">Правая кнопка мыши</button><button type="button" id="releaseKeys">Отпустить клавиши</button></div>
+  <label class="type-row">Ввести текст в XP <input id="textInput" type="text" placeholder="Напечатай текст и нажми Enter"><button type="button" id="sendText">Отправить</button></label>
+</div>
 <div class="hint" id="hint">Выбери совместимый образ установленного виртуального диска Windows XP (.img). ISO установщика сам по себе не является установленной системой.</div>
-<div class="mobile-tip">На телефоне поверни устройство горизонтально. Коснись экрана XP, чтобы управлять мышью; для клавиатуры используй экранную клавиатуру устройства.</div></section>
+<div class="mobile-tip">На телефоне поверни устройство горизонтально. Используй панель управления ниже экрана. Нажатия мыши выполняются по кнопкам слева и справа.</div></section>
 <section class="notice"><b>Важно о файлах и приватности</b><p>Образ диска выбирается локально в браузере и не загружается на сайт. Не добавляй личный диск или ключ Windows в публичный GitHub-репозиторий. Для публичного запуска каждый посетитель должен использовать образ и лицензию, распространение которых ему разрешено.</p></section>
 </main><footer>RetroXP 1.0 · Browser-based x86 emulation · Powered by v86</footer>
 <script src="https://copy.sh/v86/build/libv86.js"></script><script src="script.js"></script>

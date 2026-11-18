@@ -52,3 +52,36 @@ document.addEventListener('fullscreenchange',()=>{
   const active=!!document.fullscreenElement;
   if(fullscreenBtn)fullscreenBtn.textContent=active?'⤢ Выйти из полного экрана':'⛶ На весь экран';
 });
+
+
+// Дополнительное управление v86: аппаратные клавиши, текст и кнопки мыши.
+const scancodeButtons=document.querySelectorAll('[data-key]');
+scancodeButtons.forEach(button=>button.addEventListener('click',()=>{
+  if(!emulator || typeof emulator.keyboard_send_scancodes!=='function'){
+    hint.textContent='Сначала запусти виртуальную машину. Если управление не реагирует, проверь поддержку API текущей версии v86.';return;
+  }
+  const code=parseInt(button.dataset.key,16);
+  try{emulator.keyboard_send_scancodes([code, code|0x80]);}catch(e){hint.textContent='Не удалось отправить клавишу: '+e.message;}
+}));
+const mouseButtons=document.querySelectorAll('[data-mouse]');
+mouseButtons.forEach(button=>button.addEventListener('click',()=>{
+  if(!emulator || typeof emulator.mouse_send_button!=='function'){
+    hint.textContent='Сначала запусти виртуальную машину, чтобы использовать кнопки мыши.';return;
+  }
+  const which=Number(button.dataset.mouse);
+  try{emulator.mouse_send_button(which,true);setTimeout(()=>emulator?.mouse_send_button?.(which,false),100);}catch(e){hint.textContent='Не удалось отправить нажатие мыши: '+e.message;}
+}));
+document.getElementById('sendText')?.addEventListener('click',()=>{
+  const field=document.getElementById('textInput');
+  if(!emulator || typeof emulator.keyboard_send_text!=='function'){
+    hint.textContent='Ввод текста недоступен в этой сборке эмулятора. Можно использовать физическую или экранную клавиатуру устройства.';return;
+  }
+  if(field.value){try{emulator.keyboard_send_text(field.value);field.value='';}catch(e){hint.textContent='Не удалось отправить текст: '+e.message;}}
+});
+document.getElementById('textInput')?.addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('sendText')?.click();});
+document.getElementById('releaseKeys')?.addEventListener('click',()=>{
+  if(emulator && typeof emulator.keyboard_send_scancodes==='function'){
+    // Отправить break-коды для часто используемых модификаторов.
+    try{emulator.keyboard_send_scancodes([0x9d,0xb8,0xaa]);}catch{}
+  }
+});
