@@ -1,4 +1,6 @@
 const diskInput=document.getElementById('diskFile');
+const isoInput=document.getElementById('isoFile');
+const isoFolderInput=document.getElementById('isoFolder');
 const startBtn=document.getElementById('startBtn');
 const stopBtn=document.getElementById('stopBtn');
 const fullscreenBtn=document.getElementById('fullscreenBtn');
@@ -7,8 +9,26 @@ const screenWrap=document.querySelector('.screen-wrap');
 const statusEl=document.getElementById('status');
 const hint=document.getElementById('hint');
 const placeholder=document.getElementById('placeholder');
-let emulator=null, diskBuffer=null;
+let emulator=null, diskBuffer=null, isoBuffer=null, isoName='';
 function setStatus(text){statusEl.textContent=text;}
+
+async function loadIsoFile(file){
+  if(!file)return;
+  if(!file.name.toLowerCase().endsWith('.iso')){hint.textContent='Нужен файл с расширением .iso. Имя файла может быть любым.';return;}
+  if(file.size===0){hint.textContent='Выбранный ISO пустой (0 байт).';return;}
+  try{isoBuffer=await file.arrayBuffer();isoName=file.name;hint.textContent=`ISO подключён: ${isoName} · ${(file.size/1024/1024).toFixed(1)} МБ. Имя файла не имеет значения.`;}
+  catch(e){hint.textContent='Не удалось прочитать ISO: '+e.message;}
+}
+isoInput.addEventListener('change',()=>loadIsoFile(isoInput.files?.[0]));
+isoFolderInput.addEventListener('change',async()=>{
+  const matches=Array.from(isoFolderInput.files||[]).filter(f=>f.name.toLowerCase().endsWith('.iso')&&f.size>0);
+  if(!matches.length){hint.textContent='В выбранной папке не найдено непустых файлов .iso. Имя файла может быть любым.';return;}
+  if(matches.length===1){await loadIsoFile(matches[0]);return;}
+  const names=matches.map((f,i)=>`${i+1}. ${f.webkitRelativePath||f.name} (${(f.size/1024/1024).toFixed(1)} МБ)`).join('\n');
+  const choice=prompt(`Найдено ISO-файлов: ${matches.length}. Введи номер нужного файла:\n\n${names}`,'1');
+  const index=Number(choice)-1;
+  if(Number.isInteger(index)&&index>=0&&index<matches.length)await loadIsoFile(matches[index]);
+});
 diskInput.addEventListener('change',async()=>{
   const file=diskInput.files?.[0]; if(!file)return;
   if(file.size===0){hint.textContent='Файл пустой. Выбери другой образ диска.';return;}
@@ -19,7 +39,7 @@ diskInput.addEventListener('change',async()=>{
 startBtn.addEventListener('click',async()=>{
   if(!diskBuffer)return;
   if(typeof V86Starter==='undefined'){hint.textContent='Не загрузилась библиотека v86. Проверь подключение к интернету и обнови страницу.';return;}
-  startBtn.disabled=true;diskInput.disabled=true;setStatus('ЗАПУСК…');hint.textContent='Запускаю эмулятор. Первая загрузка может занять некоторое время.';placeholder?.remove();
+  startBtn.disabled=true;diskInput.disabled=true;setStatus('ЗАПУСК…');hint.textContent=isoBuffer?`Запускаю эмулятор с диском и ISO «${isoName}» в CD/DVD-приводе.`:'Запускаю эмулятор с выбранным виртуальным диском. Первая загрузка может занять некоторое время.';placeholder?.remove();
   try{
     emulator=new V86Starter({
       wasm_path:'https://copy.sh/v86/build/',
@@ -29,6 +49,7 @@ startBtn.addEventListener('click',async()=>{
       bios:{url:'https://copy.sh/v86/bios/seabios.bin'},
       vga_bios:{url:'https://copy.sh/v86/bios/vgabios.bin'},
       hda:{buffer:diskBuffer},
+      ...(isoBuffer?{cdrom:{buffer:isoBuffer}}:{}),
       autostart:true,
       disable_speaker:true,
     });

@@ -10,7 +10,9 @@
 <main><section class="intro"><div class="eyebrow">RETRO COMPUTING EXPERIENCE</div><h1>Твоя Windows XP.<br><em>Прямо в браузере.</em></h1><p>Запусти собственную виртуальную машину в окне браузера. Для загрузки нужна своя виртуальная копия диска Windows XP.</p></section>
 <section class="panel"><div class="panel-head"><div><span class="dot"></span> VIRTUAL MACHINE</div><span> x86 · v86</span></div>
 <div class="screen-wrap"><div id="screen_container"><div class="screen-placeholder" id="placeholder"><div class="xp-mark">XP</div><b>RetroXP 1.0</b><span>Выбери виртуальный диск, чтобы начать</span></div></div></div>
-<div class="controls"><label class="file-button" for="diskFile">Выбрать диск (.img)</label><input id="diskFile" type="file" accept=".img,.bin,.hdd,.vhd"><button id="startBtn" disabled>▶ Запустить Windows XP</button><button id="stopBtn" class="secondary" disabled>■ Остановить</button><button id="screenFullscreenBtn" class="secondary" type="button">⛶ Экран XP</button></div>
+<div class="controls"><label class="file-button" for="diskFile">Выбрать диск (.img)</label><input id="diskFile" type="file" accept=".img,.bin,.hdd,.vhd">
+<label class="file-button" for="isoFile">Выбрать ISO</label><input id="isoFile" type="file" accept=".iso">
+<label class="file-button" for="isoFolder">Папка с ISO</label><input id="isoFolder" type="file" accept=".iso" webkitdirectory directory multiple><button id="startBtn" disabled>▶ Запустить Windows XP</button><button id="stopBtn" class="secondary" disabled>■ Остановить</button><button id="screenFullscreenBtn" class="secondary" type="button">⛶ Экран XP</button></div>
 <div class="input-dock" aria-label="Управление клавиатурой и мышью">
   <div class="dock-title">КЛАВИАТУРА И МЫШЬ</div>
   <div class="key-row">
@@ -21,7 +23,7 @@
   <div class="mouse-row"><button type="button" data-mouse="0">Левая кнопка мыши</button><button type="button" data-mouse="2">Правая кнопка мыши</button><button type="button" id="releaseKeys">Отпустить клавиши</button></div>
   <label class="type-row">Ввести текст в XP <input id="textInput" type="text" placeholder="Напечатай текст и нажми Enter"><button type="button" id="sendText">Отправить</button></label>
 </div>
-<div class="hint" id="hint">Выбери совместимый образ установленного виртуального диска Windows XP (.img). ISO установщика сам по себе не является установленной системой.</div>
+<div class="hint" id="hint">Выбери виртуальный диск (.img) и при необходимости ISO установщика. Можно выбрать папку: RetroXP найдёт файлы с расширением .iso независимо от имени. Для установки с ISO нужен отдельный пустой виртуальный диск (.img).</div>
 <div class="mobile-tip">На телефоне поверни устройство горизонтально. Используй панель управления ниже экрана. Нажатия мыши выполняются по кнопкам слева и справа.</div></section>
 <section class="notice"><b>Важно о файлах и приватности</b><p>Образ диска выбирается локально в браузере и не загружается на сайт. Не добавляй личный диск или ключ Windows в публичный GitHub-репозиторий. Для публичного запуска каждый посетитель должен использовать образ и лицензию, распространение которых ему разрешено.</p></section>
 </main><footer>RetroXP 1.0 · Browser-based x86 emulation · Powered by v86</footer>
