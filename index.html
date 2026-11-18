@@ -1,1 +1,19 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RetroXP 1.0</title><link rel="stylesheet" href="style.css"><script src="https://copy.sh/v86/build/libv86.js"></script></head><body><header><b>Retro<span>XP</span> <small>1.0</small></b><span id="status">ЭМУЛЯТОР НЕ ЗАПУЩЕН</span></header><main><section><small class="tag">ВИРТУАЛЬНЫЙ ПК · В БРАУЗЕРЕ</small><h1>Windows XP<br><em>прямо здесь.</em></h1><p>Запусти виртуальную машину и установщик Windows XP в окне браузера.</p><button id="start">Запустить эмулятор</button> <button id="stop" disabled>Выключить</button><p class="hint">Нужен ISO-файл в <code>assets/windows-xp.iso</code>. Он не включён в архив.</p><p id="error"></p></section><section class="pc"><div class="bar">● ● ● <b>RetroXP — виртуальная машина</b><span id="machine-state">ОЖИДАНИЕ</span></div><div id="screen_container"><div class="placeholder"><strong>XP</strong><p>Экран виртуальной машины появится здесь</p></div></div><small>КЛАВИАТУРА И МЫШЬ · ВИРТУАЛЬНАЯ МАШИНА</small></section></main><footer>RetroXP 1.0 · Неофициальный проект. Windows XP — товарный знак Microsoft.</footer><script src="script.js"></script></body></html>
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#08111f">
+<title>RetroXP 1.0</title><link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header><div class="brand"><span class="logo">XP</span><div><b>RetroXP</b><small>Виртуальный компьютер</small></div></div><div class="head-actions"><button id="fullscreenBtn" class="head-button" type="button">⛶ На весь экран</button><span class="status" id="status">ГОТОВ К ЗАПУСКУ</span></div></header>
+<main><section class="intro"><div class="eyebrow">RETRO COMPUTING EXPERIENCE</div><h1>Твоя Windows XP.<br><em>Прямо в браузере.</em></h1><p>Запусти собственную виртуальную машину в окне браузера. Для загрузки нужна своя виртуальная копия диска Windows XP.</p></section>
+<section class="panel"><div class="panel-head"><div><span class="dot"></span> VIRTUAL MACHINE</div><span> x86 · v86</span></div>
+<div class="screen-wrap"><div id="screen_container"><div class="screen-placeholder" id="placeholder"><div class="xp-mark">XP</div><b>RetroXP 1.0</b><span>Выбери виртуальный диск, чтобы начать</span></div></div></div>
+<div class="controls"><label class="file-button" for="diskFile">Выбрать диск (.img)</label><input id="diskFile" type="file" accept=".img,.bin,.hdd,.vhd"><button id="startBtn" disabled>▶ Запустить Windows XP</button><button id="stopBtn" class="secondary" disabled>■ Остановить</button><button id="screenFullscreenBtn" class="secondary" type="button">⛶ Экран XP</button></div>
+<div class="hint" id="hint">Выбери совместимый образ установленного виртуального диска Windows XP (.img). ISO установщика сам по себе не является установленной системой.</div>
+<div class="mobile-tip">На телефоне поверни устройство горизонтально. Коснись экрана XP, чтобы управлять мышью; для клавиатуры используй экранную клавиатуру устройства.</div></section>
+<section class="notice"><b>Важно о файлах и приватности</b><p>Образ диска выбирается локально в браузере и не загружается на сайт. Не добавляй личный диск или ключ Windows в публичный GitHub-репозиторий. Для публичного запуска каждый посетитель должен использовать образ и лицензию, распространение которых ему разрешено.</p></section>
+</main><footer>RetroXP 1.0 · Browser-based x86 emulation · Powered by v86</footer>
+<script src="https://copy.sh/v86/build/libv86.js"></script><script src="script.js"></script>
+</body></html>
