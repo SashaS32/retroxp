@@ -1,6 +1,4 @@
-const diskInput=document.getElementById('diskFile');
 const isoInput=document.getElementById('isoFile');
-const isoFolderInput=document.getElementById('isoFolder');
 const startBtn=document.getElementById('startBtn');
 const stopBtn=document.getElementById('stopBtn');
 const fullscreenBtn=document.getElementById('fullscreenBtn');
@@ -9,37 +7,34 @@ const screenWrap=document.querySelector('.screen-wrap');
 const statusEl=document.getElementById('status');
 const hint=document.getElementById('hint');
 const placeholder=document.getElementById('placeholder');
-let emulator=null, diskBuffer=null, isoBuffer=null, isoName='';
+let emulator=null, isoBuffer=null, isoName='';
 function setStatus(text){statusEl.textContent=text;}
-
 async function loadIsoFile(file){
   if(!file)return;
-  if(!file.name.toLowerCase().endsWith('.iso')){hint.textContent='Нужен файл с расширением .iso. Имя файла может быть любым.';return;}
-  if(file.size===0){hint.textContent='Выбранный ISO пустой (0 байт).';return;}
-  try{isoBuffer=await file.arrayBuffer();isoName=file.name;hint.textContent=`ISO подключён: ${isoName} · ${(file.size/1024/1024).toFixed(1)} МБ. Имя файла не имеет значения.`;}
+  if(!file.name.toLowerCase().endsWith('.iso')){hint.textContent='Нужен файл с расширением .iso.';return;}
+  if(!file.size){hint.textContent='Выбранный ISO пустой (0 байт).';return;}
+  try{isoBuffer=await file.arrayBuffer();isoName=file.name;startBtn.disabled=false;hint.textContent=`ISO готов: ${isoName} · ${(file.size/1024/1024).toFixed(1)} МБ. Нажми «Запустить Windows XP».`;setStatus('ISO ПОДКЛЮЧЁН');}
   catch(e){hint.textContent='Не удалось прочитать ISO: '+e.message;}
 }
 isoInput.addEventListener('change',()=>loadIsoFile(isoInput.files?.[0]));
-isoFolderInput.addEventListener('change',async()=>{
-  const matches=Array.from(isoFolderInput.files||[]).filter(f=>f.name.toLowerCase().endsWith('.iso')&&f.size>0);
-  if(!matches.length){hint.textContent='В выбранной папке не найдено непустых файлов .iso. Имя файла может быть любым.';return;}
-  if(matches.length===1){await loadIsoFile(matches[0]);return;}
-  const names=matches.map((f,i)=>`${i+1}. ${f.webkitRelativePath||f.name} (${(f.size/1024/1024).toFixed(1)} МБ)`).join('\n');
-  const choice=prompt(`Найдено ISO-файлов: ${matches.length}. Введи номер нужного файла:\n\n${names}`,'1');
-  const index=Number(choice)-1;
-  if(Number.isInteger(index)&&index>=0&&index<matches.length)await loadIsoFile(matches[index]);
-});
-diskInput.addEventListener('change',async()=>{
-  const file=diskInput.files?.[0]; if(!file)return;
-  if(file.size===0){hint.textContent='Файл пустой. Выбери другой образ диска.';return;}
-  hint.textContent=`Выбран: ${file.name} · ${(file.size/1024/1024).toFixed(1)} МБ. Читаю файл локально…`;
-  try{diskBuffer=await file.arrayBuffer();startBtn.disabled=false;hint.textContent=`Готово: ${file.name}. Файл остаётся в этом браузере и не отправляется на сервер.`;setStatus('ДИСК ПОДКЛЮЧЁН');}
-  catch(e){hint.textContent='Не удалось прочитать файл: '+e.message;}
-});
+// Пробуем загрузить ISO по прямой ссылке Google Drive. Drive может вернуть
+// HTML-подтверждение или заблокировать запрос через CORS; тогда нужен ручной выбор.
+const DRIVE_ISO_URL='https://drive.google.com/uc?export=download&id=141hM1shSenSf9gGN3oNqNxJnbb8IFhDc';
+(async()=>{
+  try{
+    const response=await fetch(DRIVE_ISO_URL);
+    if(!response.ok)throw new Error('Google Drive ответил HTTP '+response.status+'.');
+    const blob=await response.blob();
+    if(!blob.size || (blob.type||'').toLowerCase().includes('text/html'))throw new Error('Google Drive вернул страницу подтверждения вместо ISO.');
+    isoBuffer=await blob.arrayBuffer();isoName='GRTMPVOL_RU.ISO (Google Drive)';startBtn.disabled=false;
+    hint.textContent=`ISO получен из Google Drive · ${(blob.size/1024/1024).toFixed(1)} МБ. Нажми «Запустить Windows XP».`;
+    setStatus('ISO ПОДКЛЮЧЁН');
+  }catch(e){hint.textContent='Не удалось автоматически получить ISO из Google Drive: '+e.message+' Скачай GRTMPVOL_RU.ISO и выбери его кнопкой «Выбрать ISO». Возможны ограничения CORS или подтверждение скачивания большого файла.';}
+})();
 startBtn.addEventListener('click',async()=>{
-  if(!diskBuffer)return;
-  if(typeof V86Starter==='undefined'){hint.textContent='Не загрузилась библиотека v86. Проверь подключение к интернету и обнови страницу.';return;}
-  startBtn.disabled=true;diskInput.disabled=true;setStatus('ЗАПУСК…');hint.textContent=isoBuffer?`Запускаю эмулятор с диском и ISO «${isoName}» в CD/DVD-приводе.`:'Запускаю эмулятор с выбранным виртуальным диском. Первая загрузка может занять некоторое время.';placeholder?.remove();
+  if(!isoBuffer)return;
+  if(typeof V86Starter==='undefined'){hint.textContent='Не загрузилась библиотека v86. Проверь интернет и обнови страницу.';return;}
+  startBtn.disabled=true;isoInput.disabled=true;setStatus('ЗАПУСК…');hint.textContent=`Запускаю эмулятор с ISO «${isoName}» как CD/DVD. Виртуальный жёсткий диск намеренно не подключён.`;placeholder?.remove();
   try{
     emulator=new V86Starter({
       wasm_path:'https://copy.sh/v86/build/v86.wasm',
@@ -48,32 +43,20 @@ startBtn.addEventListener('click',async()=>{
       screen_container:document.getElementById('screen_container'),
       bios:{url:'https://copy.sh/v86/bios/seabios.bin'},
       vga_bios:{url:'https://copy.sh/v86/bios/vgabios.bin'},
-      hda:{buffer:diskBuffer},
-      ...(isoBuffer?{cdrom:{buffer:isoBuffer}}:{}),
+      cdrom:{buffer:isoBuffer},
       autostart:true,
       disable_speaker:true,
     });
-    emulator.add_listener('emulator-ready',()=>{setStatus('ВИРТУАЛЬНАЯ МАШИНА РАБОТАЕТ');hint.textContent='Эмулятор запущен. Если диск совместим и содержит загрузочную систему, Windows начнёт загружаться.';stopBtn.disabled=false;});
-    emulator.add_listener('emulator-started',()=>setStatus('ЗАГРУЗКА WINDOWS'));
+    emulator.add_listener('emulator-ready',()=>{setStatus('ЭМУЛЯТОР РАБОТАЕТ');hint.textContent='Эмулятор запущен с ISO. Без виртуального жёсткого диска установщик Windows не сможет установить систему; это режим запуска/проверки ISO.';stopBtn.disabled=false;});
+    emulator.add_listener('emulator-started',()=>setStatus('ЗАГРУЗКА ISO'));
     emulator.add_listener('emulator-stopped',()=>setStatus('ОСТАНОВЛЕН'));
-  }catch(e){setStatus('ОШИБКА');hint.textContent='Не удалось запустить: '+e.message;startBtn.disabled=false;diskInput.disabled=false;}
+  }catch(e){setStatus('ОШИБКА');hint.textContent='Не удалось запустить: '+e.message;startBtn.disabled=false;isoInput.disabled=false;}
 });
-stopBtn.addEventListener('click',()=>{if(emulator){emulator.stop();emulator=null;}stopBtn.disabled=true;startBtn.disabled=!diskBuffer;diskInput.disabled=false;setStatus('ОСТАНОВЛЕН');hint.textContent='Виртуальная машина остановлена. Для нового запуска нажми кнопку запуска.';});
-
-async function toggleFullscreen(target){
-  try{
-    if(document.fullscreenElement){await document.exitFullscreen();}
-    else if(target?.requestFullscreen){await target.requestFullscreen();}
-    else{hint.textContent='Полноэкранный режим не поддерживается этим браузером.';}
-  }catch(e){hint.textContent='Не удалось включить полный экран: '+e.message;}
-}
+stopBtn.addEventListener('click',()=>{if(emulator){emulator.stop();emulator=null;}stopBtn.disabled=true;startBtn.disabled=!isoBuffer;isoInput.disabled=false;setStatus('ОСТАНОВЛЕН');hint.textContent='Эмулятор остановлен. Можно запустить ISO снова.';});
+async function toggleFullscreen(target){try{if(document.fullscreenElement)await document.exitFullscreen();else if(target?.requestFullscreen)await target.requestFullscreen();else hint.textContent='Полноэкранный режим не поддерживается.';}catch(e){hint.textContent='Не удалось включить полный экран: '+e.message;}}
 fullscreenBtn?.addEventListener('click',()=>toggleFullscreen(document.documentElement));
 screenFullscreenBtn?.addEventListener('click',()=>toggleFullscreen(screenWrap));
-document.addEventListener('fullscreenchange',()=>{
-  const active=!!document.fullscreenElement;
-  if(fullscreenBtn)fullscreenBtn.textContent=active?'⤢ Выйти из полного экрана':'⛶ На весь экран';
-});
-
+document.addEventListener('fullscreenchange',()=>{if(fullscreenBtn)fullscreenBtn.textContent=document.fullscreenElement?'⤢ Выйти из полного экрана':'⛶ На весь экран';});
 
 // Дополнительное управление v86: аппаратные клавиши, текст и кнопки мыши.
 const scancodeButtons=document.querySelectorAll('[data-key]');
