@@ -42,7 +42,7 @@ startBtn.addEventListener('click',async()=>{
   startBtn.disabled=true;diskInput.disabled=true;setStatus('ЗАПУСК…');hint.textContent=isoBuffer?`Запускаю эмулятор с диском и ISO «${isoName}» в CD/DVD-приводе.`:'Запускаю эмулятор с выбранным виртуальным диском. Первая загрузка может занять некоторое время.';placeholder?.remove();
   try{
     emulator=new V86Starter({
-      wasm_path:'https://copy.sh/v86/build/',
+      wasm_path:'https://copy.sh/v86/build/v86.wasm',
       memory_size:512*1024*1024,
       vga_memory_size:8*1024*1024,
       screen_container:document.getElementById('screen_container'),
